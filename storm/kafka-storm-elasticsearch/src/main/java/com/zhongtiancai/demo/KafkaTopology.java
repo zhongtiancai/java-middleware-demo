@@ -1,5 +1,8 @@
 package com.zhongtiancai.demo;
 import com.google.gson.Gson;
+
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
@@ -31,7 +34,7 @@ public class KafkaTopology {
         Properties properties = new Properties();
         properties.setProperty("group.id", "test-news-topic"); // kafka server的基本配置
         // 定义一个KafkaSpoutConfig
-        KafkaSpoutConfig<String, String> kafkaSpoutConfig = KafkaSpoutConfig.builder("192.168.119.128:9092",
+        KafkaSpoutConfig<String, String> kafkaSpoutConfig = KafkaSpoutConfig.builder("10.2.2.79:9092",
                 "access-log")
                 .setFirstPollOffsetStrategy(KafkaSpoutConfig.FirstPollOffsetStrategy.UNCOMMITTED_EARLIEST)
                 .setProp(properties).build();
@@ -39,7 +42,9 @@ public class KafkaTopology {
         topologyBuilder.setSpout("kafka-spout", kafkaSpout, 1); // 注入Spout
         topologyBuilder.setBolt("kafka-bolt", new NewsBlot(), 1).shuffleGrouping("kafka-spout"); // 通过storm获取kafka-spout数据
 
-        EsConfig esConfig = new EsConfig(new String[]{"http://192.168.119.128:9200"}); // 定义一个ES的配置信息
+        EsConfig esConfig = new EsConfig(new String[]{"http://10.2.2.79:9200"}).withDefaultHeaders(new Header[] {
+        		new BasicHeader("Content-Type", "application/json;charset=UTF-8")
+        }); // 定义一个ES的配置信息
         EsTupleMapper esTupleMapper = new DefaultEsTupleMapper(); // 定义ES的默认映射
         EsIndexBolt indexBolt = new EsIndexBolt(esConfig, esTupleMapper); //定义一个索引Bolt
         topologyBuilder.setBolt("es-bolt", indexBolt, 1).shuffleGrouping("kafka-bolt"); // 向topology注入indexBolt以处理kafka-bolt的数据
@@ -70,12 +75,18 @@ public class KafkaTopology {
 
 		// 当有消息时执行，封装消息发送，格式与定义输出字段一一对应declarer.declare（xxx）
         public void execute(Tuple input, BasicOutputCollector collector) {
-            String message = input.getString(0);
-            String[] fileds = message.split(" ");
-            String id = UUID.randomUUID().toString();
-            AccessLog accessLog = new AccessLog();
-            accessLog.setIp(fileds[1]);
-            accessLog.setUrl(fileds[0]);
+			String message = (String) input.getValue(4);
+			System.out.println(message);
+			String[] fileds = message.split("  ");
+			String id = UUID.randomUUID().toString();
+			AccessLog accessLog = new AccessLog();
+			if (fileds.length < 2) {
+				accessLog.setIp("localhost");
+				accessLog.setUrl("www.baidu.com");
+			} else {
+				accessLog.setIp(fileds[0].split("- -")[0]);
+				accessLog.setUrl(fileds[1]);
+			}
             Gson gson = new Gson();
             String source = gson.toJson(accessLog);
             collector.emit(new Values(source, "idx_sys", "tb_access_log", id));

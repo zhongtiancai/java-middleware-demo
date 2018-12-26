@@ -1,0 +1,11 @@
+server.port=1111
+#不注册到注册中心
+eureka.client.register-with-eureka=false
+#不从注册中心拉取数据
+eureka.client.fetch-registry=false
+eureka.client.serviceUrl.defaultZone=http://localhost:${server.port}/eureka/
+spring.output.ansi.enabled=DETECT
+
+#关于服务注册中心更加详细的配置项,参见以下类的源码
+#org.springframework.cloud.netflix.eureka.EurekaClientConfigBean
+#org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean

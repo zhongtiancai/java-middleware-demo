@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.zhongtiancai</groupId>
+	<artifactId>spring-boot-motan-client</artifactId>
+	<version>0.1.0</version>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.4.0.RELEASE</version>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<!-- tag::actuator[] -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<!-- end::actuator[] -->
+		<!-- tag::tests[] -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		 <dependency>
+		     <groupId>com.weibo</groupId>
+		     <artifactId>motan-core</artifactId>
+		     <version>0.3.0</version>
+		 </dependency>
+		 <dependency>
+		     <groupId>com.weibo</groupId>
+		     <artifactId>motan-transport-netty</artifactId>
+		     <version>0.3.0</version>
+		 </dependency>
+		 
+		 <!-- dependencies blow were only needed for spring-based features -->
+		 <dependency>
+		     <groupId>com.weibo</groupId>
+		     <artifactId>motan-springsupport</artifactId>
+		     <version>0.3.0</version>
+		 </dependency>
+		 <dependency>
+		    <groupId>com.weibo</groupId>
+		    <artifactId>motan-registry-zookeeper</artifactId>
+		    <version>0.2.1</version>
+		</dependency>
+
+		<!-- end::tests[] -->
+		
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>1.0.19</version>
+		</dependency>
+		<dependency>
+
+           <groupId>javax.servlet</groupId>
+
+           <artifactId>jstl</artifactId>
+
+       </dependency>
+	</dependencies>
+
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -1,0 +1,11 @@
+spring:
+  rabbitmq:
+    host: xx.xx.xx.xx
+    port: 1000
+    password: guest
+    username: guest
+    listener:
+      type: simple
+      simple:
+        default-requeue-rejected: false
+        acknowledge-mode: manual
